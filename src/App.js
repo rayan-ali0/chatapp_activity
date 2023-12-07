@@ -4,7 +4,7 @@ import Input from "./components/Input/Input.js";
 import io from 'socket.io-client';
 // import ChooseUser from "./components/ChooseUser/ChooseUser.js";
 
-const socket = io('http://localhost:7778/');
+const socket = io('http://localhost:7779/');
 function App() {
   
   const [username, setUsername] = useState("Current User");
@@ -42,30 +42,32 @@ function App() {
     },
   ]);
 
-  useEffect( ()=>{
-    let userInput = prompt("enter your name: ");
-    setUsername(userInput);
+  // useEffect( ()=>{
+  //   let userInput = prompt("enter your name: ");
+  //   setUsername(userInput);
   
-  },[window.open])
+  // },[])
 
   
   useEffect(() => {
-    socket.on("connect", () => {
+    socket.on("connection", () => {
       console.log("Connected to the server!");
-     
+    
     });
     
 
     socket.on("message", (data) => {
       console.log("ddddddddddddddd")
-      
-      setMessages((prevMessages) => [...prevMessages, {text: data, sender: username}]);
+      // setUsername(socket.id);
+      // setMessages((prevMessages) => [...prevMessages, {text: data, sender: username}]);
+      setMessages((prevMessages) => [...prevMessages, {text: data, sender: ""}]);
+
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [username]);
+  }, [socket]);
 
 
   // const sendMessage = (msg) => {   
@@ -76,14 +78,14 @@ function App() {
   // };
 
   const sendMessage = (text) => {
-    // const newMessage = {
-    //   text,
-    //   sender: username,
-    // };
+    const newMessage = {
+      text,
+      sender: username,
+    };
 
     socket.emit("message", text);
 
-    // setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
 
